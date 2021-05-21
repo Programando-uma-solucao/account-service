@@ -12,7 +12,7 @@ $ npm install
 
 - [nestjs](https://nestjs.com/)
 
-- [Banco de dados MongoDB](https://www.mongodb.com/try/download/community?tck=docs_server)
+- [Banco de dados MongoDB](https://www.mongodb.com/try/download/compass)
 
 ## Rodando a aplicação
 
