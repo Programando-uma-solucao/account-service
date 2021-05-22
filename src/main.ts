@@ -5,8 +5,8 @@ import { AccountModule } from './app.module';
 (async function bootstrap() {
   const app = await NestFactory.createMicroservice(AccountModule, {
     transport: Transport.TCP,
-    options: { host: 'localhost', port: 3000 },
+    options: { host: 'localhost', port: 8081 },
   });
 
-  app.listen(() => console.log('account-service is listening on port 3000'));
+  app.listen(() => console.log('account-service is listening on port 8081'));
 })()
