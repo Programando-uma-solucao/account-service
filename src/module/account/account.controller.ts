@@ -6,8 +6,8 @@ import { AccountService } from './account.service';
 export class AccountController {
   constructor(private readonly accountService: AccountService) {}
 
-  @MessagePattern('createAccount')
-  createAccount(): string {
-    return this.accountService.createAccount();
+  @MessagePattern('create')
+  create(): string {
+    return this.accountService.create();
   }
 }

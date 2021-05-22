@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class AccountService {
-  createAccount(): string {
+  create(): string {
     return 'account created';
   }
 }
