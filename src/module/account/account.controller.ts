@@ -7,7 +7,7 @@ export class AccountController {
   constructor(private readonly accountService: AccountService) {}
 
   @MessagePattern('create')
-  create(): string {
-    return this.accountService.create();
+  createAccount(): string {
+    return this.accountService.createAccount();
   }
 }
