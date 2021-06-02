@@ -2,12 +2,13 @@ import { Model } from 'mongoose';
 import { Inject, Injectable } from '@nestjs/common';
 import { ClientProxy, RpcException } from '@nestjs/microservices';
 import { InjectModel } from '@nestjs/mongoose';
-import { plainToClass } from 'class-transformer';
 
 import { CreateUserDTO } from './dtos/CreateUser.dto';
 import { User, UserDocument, UserRoles } from './schemas/User.schema';
 import { CipherServiceConfig } from 'src/config/microservices.config';
 import { SecretQuestionService } from './secretQuestion.service';
+import { GenerateJwtDTO } from './dtos/GenerateJwt.dto';
+import { EncryptDataDto } from './dtos/EncryptData.dto';
 
 @Injectable()
 export class AccountService {
@@ -18,9 +19,9 @@ export class AccountService {
     private readonly secretQuestionService: SecretQuestionService,
   ) {}
 
-  async create(data: CreateUserDTO): Promise<User> {
+  async create(data: CreateUserDTO) {
     const encryptedData = await this.cipherService
-      .send('encrypt', {
+      .send<any, EncryptDataDto>('encrypt', {
         toEncrypt: data,
         ignore: ['role', 'sex', 'tags'],
       })
@@ -60,6 +61,15 @@ export class AccountService {
       userId: savedUser._id,
     });
 
-    return plainToClass(User, savedUser.toObject());
+    const token = await this.cipherService
+      .send<{ token: string }, GenerateJwtDTO>('generateJwt', {
+        email: data.email,
+        id: savedUser.id,
+        name: data.name,
+        role: data.role,
+      })
+      .toPromise();
+
+    return token;
   }
 }
