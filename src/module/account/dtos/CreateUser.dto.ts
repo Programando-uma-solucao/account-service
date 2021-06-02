@@ -41,6 +41,14 @@ export class CreateUserDTO {
   role: string;
 
   @IsString()
+  @IsNotEmpty()
+  secretQuestion: string;
+
+  @IsString()
+  @IsNotEmpty()
+  secretAnswer: string;
+
+  @IsString()
   @IsOptional()
   oab?: string;
 

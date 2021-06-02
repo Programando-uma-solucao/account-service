@@ -7,6 +7,7 @@ import { plainToClass } from 'class-transformer';
 import { CreateUserDTO } from './dtos/CreateUser.dto';
 import { User, UserDocument, UserRoles } from './schemas/User.schema';
 import { CipherServiceConfig } from 'src/config/microservices.config';
+import { SecretQuestionService } from './secretQuestion.service';
 
 @Injectable()
 export class AccountService {
@@ -14,6 +15,7 @@ export class AccountService {
     @InjectModel(User.name) private userModel: Model<UserDocument>,
     @Inject(CipherServiceConfig.name)
     private readonly cipherService: ClientProxy,
+    private readonly secretQuestionService: SecretQuestionService,
   ) {}
 
   async create(data: CreateUserDTO): Promise<User> {
@@ -49,6 +51,14 @@ export class AccountService {
 
     const createdUser = new this.userModel(dataToSave);
     const savedUser = await createdUser.save();
+
+    await this.secretQuestionService.create({
+      question: encryptedData.secretQuestion,
+      answer: encryptedData.secretAnswer,
+      questionHash: encryptedData.secretQuestionHash,
+      answerHash: encryptedData.secretAnswerHash,
+      userId: savedUser._id,
+    });
 
     return plainToClass(User, savedUser.toObject());
   }
