@@ -1,13 +1,16 @@
 import { Controller } from '@nestjs/common';
-import { MessagePattern } from '@nestjs/microservices';
-import { AccountService } from './account.service';
+import { MessagePattern, Payload } from '@nestjs/microservices';
 
-@Controller('account')
+import { AccountService } from './account.service';
+import { CreateUserDTO } from './dtos/CreateUser.dto';
+import { User } from './schemas/User.schema';
+
+@Controller()
 export class AccountController {
   constructor(private readonly accountService: AccountService) {}
 
-  @MessagePattern('create')
-  create(): string {
-    return this.accountService.create();
+  @MessagePattern('createUser')
+  async create(@Payload() data: CreateUserDTO): Promise<User> {
+    return this.accountService.create(data);
   }
 }
