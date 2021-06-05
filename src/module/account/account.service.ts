@@ -72,9 +72,18 @@ export class AccountService {
 
     return token;
   }
-  
-  async getAccount(emailHash: string){
-    return this.userModel.findOne({ emailHash })
-  }
 
+  async getAccount(data) {
+    const field: string = Object.keys(data)[0];
+
+    if (field == '_id') return this.userModel.findOne(data);
+    const encrypted = await this.cipherService
+      .send('encryptOne', data[field])
+      .toPromise();
+
+    const query = {};
+    query[`${field}Hash`] = encrypted.hash;
+
+    return await this.userModel.findOne(query);
+  }
 }

@@ -14,7 +14,7 @@ export class AccountController {
   }
 
   @MessagePattern('getAccount')
-  async getAccount(@Payload() emailHash: string) {
-    return this.accountService.getAccount(emailHash);    
+  async getAccount(@Payload() data: any) {
+    return this.accountService.getAccount(data);
   }
 }
