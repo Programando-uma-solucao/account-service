@@ -72,4 +72,9 @@ export class AccountService {
 
     return token;
   }
+  
+  async getAccount(emailHash: string){
+    return this.userModel.findOne({ emailHash })
+  }
+
 }
