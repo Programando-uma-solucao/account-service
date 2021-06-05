@@ -9,6 +9,7 @@ import { CipherServiceConfig } from 'src/config/microservices.config';
 import { SecretQuestionService } from './secretQuestion.service';
 import { GenerateJwtDTO } from './dtos/GenerateJwt.dto';
 import { EncryptDataDto } from './dtos/EncryptData.dto';
+import { ChangePasswordDTO } from './dtos/ChangePassword.dto';
 
 @Injectable()
 export class AccountService {
@@ -71,5 +72,29 @@ export class AccountService {
       .toPromise();
 
     return token;
+  }
+
+  async getAccount(data: any) {
+    const field: string = Object.keys(data)[0];
+
+    if (field == '_id') return this.userModel.findOne(data);
+    const encrypted = await this.cipherService
+      .send('encryptOne', data[field])
+      .toPromise();
+
+    const query = {};
+    query[`${field}Hash`] = encrypted.hash;
+
+    const account: UserDocument = await this.userModel.findOne(query);
+
+    if (!account) {
+      throw new RpcException({
+        message: `Account with this ${field} not found`,
+        httpCode: 404,
+      });
+    }
+
+    console.log(account);
+    return account;
   }
 }

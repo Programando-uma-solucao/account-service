@@ -14,7 +14,12 @@ describe('AccountController', () => {
     accountController = account.get<AccountController>(AccountController);
   });
 
-  it('should be defined', () => {
-    expect(accountController.createAccount()).toBe('account created');
+  // it('should be defined', () => {
+  //   expect(accountController.create()).toBe('account created');
+  // });
+
+  it('should return an account', () => {
+    const data: any = { email: 'contato.guilhermehchaves@gmail.com' };
+    expect(accountController.getAccount(data)).toBe({});
   });
 });

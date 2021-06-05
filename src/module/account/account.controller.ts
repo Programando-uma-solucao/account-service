@@ -12,4 +12,9 @@ export class AccountController {
   async create(@Payload() data: CreateUserDTO) {
     return this.accountService.create(data);
   }
+
+  @MessagePattern('getAccount')
+  async getAccount(@Payload() data: any) {
+    return this.accountService.getAccount(data);
+  }
 }
