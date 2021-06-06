@@ -20,4 +20,8 @@ export class SecretQuestionService {
 
     await secretQuestion.save();
   }
+
+  async get(userId: string) {
+    return await this.secretQuestionModel.findOne({ userId });
+  }
 }
