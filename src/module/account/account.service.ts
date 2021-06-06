@@ -9,6 +9,7 @@ import { CipherServiceConfig } from 'src/config/microservices.config';
 import { SecretQuestionService } from './secretQuestion.service';
 import { GenerateJwtDTO } from './dtos/GenerateJwt.dto';
 import { EncryptDataDto } from './dtos/EncryptData.dto';
+import { RecoverSecretQuestionDTO } from './dtos/RecoverSecretQuestion.dto';
 
 @Injectable()
 export class AccountService {
@@ -22,7 +23,7 @@ export class AccountService {
   async create(data: CreateUserDTO) {
     const encryptedData = await this.cipherService
       .send<any, EncryptDataDto>('encrypt', {
-        toEncrypt: data,
+        data,
         ignore: ['role', 'sex', 'tags'],
       })
       .toPromise();
@@ -73,7 +74,7 @@ export class AccountService {
     return token;
   }
 
-  async getAccount(data) {
+  async getAccount(data: any): Promise<UserDocument> {
     const field: string = Object.keys(data)[0];
 
     if (field == '_id') return this.userModel.findOne(data);
@@ -85,5 +86,26 @@ export class AccountService {
     query[`${field}Hash`] = encrypted.hash;
 
     return await this.userModel.findOne(query);
+  }
+
+  async recoverSecretQuestion(data: RecoverSecretQuestionDTO) {
+    const encryptedAccount: UserDocument = await this.getAccount(data);
+
+    if (!encryptedAccount) {
+      throw new RpcException({
+        message: 'Account not found',
+        httpCode: 404,
+      });
+    }
+
+    const encryptedSecretQuestion = await this.secretQuestionService.get(
+      encryptedAccount._id,
+    );
+
+    const question: string = await this.cipherService
+      .send('decryptOne', encryptedSecretQuestion.question)
+      .toPromise();
+
+    return { question };
   }
 }
