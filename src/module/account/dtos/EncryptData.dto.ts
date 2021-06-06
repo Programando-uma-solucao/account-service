@@ -1,4 +1,4 @@
 export interface EncryptDataDto {
-  toEncrypt: any;
+  data: any;
   ignore: Array<string>;
 }
