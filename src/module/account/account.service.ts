@@ -91,18 +91,21 @@ export class AccountService {
   async recoverSecretQuestion(data: RecoverSecretQuestionDTO) {
     const encryptedAccount: UserDocument = await this.getAccount(data);
 
-    if(!encryptedAccount) {
+    if (!encryptedAccount) {
       throw new RpcException({
         message: 'Account not found',
         httpCode: 404,
       });
     }
 
-    const encryptedSecretQuestion = await this.secretQuestionService.get(encryptedAccount._id);
+    const encryptedSecretQuestion = await this.secretQuestionService.get(
+      encryptedAccount._id,
+    );
 
-    return await this.cipherService.send('decrypt', {
-      data: encryptedSecretQuestion,
-      ignore: ['_id','answer','userId', '__v']
-    }).toPromise()
+    const question: string = await this.cipherService
+      .send('decryptOne', encryptedSecretQuestion.question)
+      .toPromise();
+
+    return { question };
   }
 }

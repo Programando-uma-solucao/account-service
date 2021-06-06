@@ -21,6 +21,6 @@ export class AccountController {
 
   @MessagePattern('recoverSecretQuestion')
   async recoverSecretQuestion(@Payload() data: RecoverSecretQuestionDTO) {
-    return this.accountService.recoverSecretQuestion(data)
+    return this.accountService.recoverSecretQuestion(data);
   }
 }
