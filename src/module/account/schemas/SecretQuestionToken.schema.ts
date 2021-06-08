@@ -12,7 +12,6 @@ export class SecretQuestionToken {
 
   @Prop({
     required: true,
-    unique: true,
     type: Types.ObjectId,
   })
   userId: string;
