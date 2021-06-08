@@ -4,6 +4,8 @@ import { MessagePattern, Payload } from '@nestjs/microservices';
 import { AccountService } from './account.service';
 import { RecoverSecretQuestionDTO } from './dtos/RecoverSecretQuestion.dto';
 import { CreateUserDTO } from './dtos/CreateUser.dto';
+import { AnswerSecretQuestionDTO } from './dtos/AnswerSecretQuestion.dto';
+import { ChangePasswordDTO } from './dtos/ChangePassword.dto';
 
 @Controller('account')
 export class AccountController {
@@ -22,5 +24,15 @@ export class AccountController {
   @MessagePattern('recoverSecretQuestion')
   async recoverSecretQuestion(@Payload() data: RecoverSecretQuestionDTO) {
     return this.accountService.recoverSecretQuestion(data);
+  }
+
+  @MessagePattern('answerSecretQuestion')
+  async answerSecretQuestion(@Payload() data: AnswerSecretQuestionDTO) {
+    return this.accountService.answerSecretQuestion(data);
+  }
+
+  @MessagePattern('changePassword')
+  async changePassword(@Payload() data: ChangePasswordDTO) {
+    return this.accountService.changePassword(data);
   }
 }
