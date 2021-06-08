@@ -21,4 +21,12 @@ export class SecretQuestionTokenService {
 
     await secretQuestionToken.save();
   }
+
+  async get(token: string) {
+    return await this.secretQuestionTokenModel.findOne({ token });
+  }
+
+  async delete(data: any) {
+    return await this.secretQuestionTokenModel.deleteOne(data);
+  }
 }

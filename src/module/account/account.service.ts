@@ -12,9 +12,11 @@ import { GenerateJwtDTO } from './dtos/GenerateJwt.dto';
 import { EncryptDataDto } from './dtos/EncryptData.dto';
 import { RecoverSecretQuestionDTO } from './dtos/RecoverSecretQuestion.dto';
 import { AnswerSecretQuestionDTO } from './dtos/AnswerSecretQuestion.dto';
-import { BadRequest, NotFound } from '../../common/error/http';
+import { BadRequest, NotFound, Unauthorized } from '../../common/error/http';
 import { SecretQuestionDocument } from './schemas/SecretQuestion.schema';
 import { SecretQuestionTokenService } from './secretQuestionToken.service';
+import { ChangePasswordDTO } from './dtos/ChangePassword.dto';
+import { SecretQuestionTokenDocument } from './schemas/SecretQuestionToken.schema';
 
 @Injectable()
 export class AccountService {
@@ -137,5 +139,32 @@ export class AccountService {
     });
 
     return { token: answerToken };
+  }
+
+  async updateAccount(account: any, param: any) {
+    await this.userModel.updateOne(account, param);
+  }
+
+  async changePassword(data: ChangePasswordDTO) {
+    const { password, token } = data;
+    const secretQuestionToken: SecretQuestionTokenDocument =
+      await this.secretQuestionTokenService.get(token);
+
+    if (!secretQuestionToken) {
+      Unauthorized('invalid token');
+    }
+
+    const encryptedPassword = await this.cipherService
+      .send('encryptOne', password)
+      .toPromise();
+
+    this.updateAccount(
+      { _id: secretQuestionToken.userId },
+      { password: encryptedPassword.hash },
+    );
+
+    await this.secretQuestionTokenService.delete(secretQuestionToken);
+
+    return { message: 'password successfully changed' };
   }
 }

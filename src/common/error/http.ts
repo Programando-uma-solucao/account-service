@@ -13,3 +13,10 @@ export const NotFound = (param: string) => {
     httpCode: 404,
   });
 };
+
+export const Unauthorized = (message: string) => {
+  throw new RpcException({
+    message: `unauthorized: ${message}`,
+    httpCode: 401,
+  });
+};
