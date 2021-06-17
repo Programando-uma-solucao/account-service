@@ -26,7 +26,11 @@ import { SecretQuestionTokenService } from './module/account/secretQuestionToken
     ConfigModule.forRoot({
       envFilePath: ['.env', '.development.env'],
     }),
-    MongooseModule.forRoot(process.env.MONGO_URL),
+    MongooseModule.forRoot(process.env.MONGO_URL, {
+      pass: process.env.MONGO_PASS,
+      user: process.env.MONGO_USER,
+      dbName: 'account-service',
+    }),
     ClientsModule.register([CipherServiceConfig]),
     MongooseModule.forFeature([
       { name: User.name, schema: UserSchema },
