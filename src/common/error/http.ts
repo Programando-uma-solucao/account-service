@@ -16,7 +16,7 @@ export const NotFound = (param: string) => {
 
 export const Unauthorized = (message: string) => {
   throw new RpcException({
-    message: `unauthorized: ${message}`,
+    message: `Unauthorized: ${message}`,
     httpCode: 401,
   });
 };

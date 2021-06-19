@@ -79,23 +79,22 @@ export class AccountService {
     return token;
   }
 
-  async getAccount(data: any): Promise<UserDocument> {
-    const field: string = Object.keys(data)[0];
-
-    if (field == '_id') return this.userModel.findOne(data);
-
+  async getAccountByEmail(email: string): Promise<UserDocument> {
     const encrypted = await this.cipherService
-      .send('encryptOne', data[field])
+      .send('encryptOne', email)
       .toPromise();
 
-    const query = {};
-    query[`${field}Hash`] = encrypted.hash;
+    return this.userModel.findOne({ emailHash: encrypted.hash });
+  }
 
-    return await this.userModel.findOne(query);
+  async getAccountById(id: string) {
+    return this.userModel.findById(id);
   }
 
   async recoverSecretQuestion(data: RecoverSecretQuestionDTO) {
-    const encryptedAccount: UserDocument = await this.getAccount(data);
+    const encryptedAccount: UserDocument = await this.getAccountByEmail(
+      data.email,
+    );
 
     if (!encryptedAccount) {
       NotFound('account');

@@ -16,9 +16,14 @@ export class AccountController {
     return this.accountService.create(data);
   }
 
-  @MessagePattern('getAccount')
-  async getAccount(@Payload() data: any) {
-    return this.accountService.getAccount(data);
+  @MessagePattern('getAccountByEmail')
+  async getAccountByEmail(@Payload() email: string) {
+    return this.accountService.getAccountByEmail(email);
+  }
+
+  @MessagePattern('getAccountById')
+  async getAccountById(@Payload() id: string) {
+    return this.accountService.getAccountById(id);
   }
 
   @MessagePattern('recoverSecretQuestion')
